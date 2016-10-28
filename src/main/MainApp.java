@@ -1,30 +1,63 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainApp {
+	private final static String basePath = "c:/hw4/";
+    private final static String inputPath = basePath + "input.txt";
+    private final static String outputPath = basePath + "2013147550.txt";
+
+    private static StringBuilder builder = new StringBuilder();
 
     public static void main(String[] args) {
-        int [][]boardValues = {
-                {3, 1, 2, 8},
-                {1, 9, 2, 30},
-                {3, 2, 4, 3},
-                {2, 4, 1, 1},
-                {2, 1, 9, 20}
-        };
-        int [][]boardValues2 = {
-                {14, 32, 16, 39},
-                {11, 30, 43, 38},
-                {40, 39, 46, 25},
-                {3, 28, 45, 23},
-                {9, 1, 44, 29},
-                {42, 36, 41, 29},
-                {6, 32, 47, 29}
-        };
-        int N = 7;
+        int [][]boardValues;
+        
+        try {
+            //모든 인풋 텍스트를 라인단위로 리스트에 저장한다.
+            BufferedReader br = new BufferedReader(new FileReader(inputPath));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));
+            String sCurrentLine;
+            ArrayList<String> inputlist = new ArrayList<>();
+            while ((sCurrentLine = br.readLine()) != null) {
+                inputlist.add(sCurrentLine);
+            }
 
-        MaxPebbleFinder finder = new MaxPebbleFinder(N, boardValues2);
+            br.close();
 
-        System.out.println(finder.getMaxPlacementSum());
+            // algorithm
+            int index = 0;
+            int testCases = Integer.parseInt(inputlist.get(index++));
+            for (int i = 0; i < testCases; i++) {
+            	int columns = Integer.parseInt(inputlist.get(index++));
+            	boardValues = new int[columns][4];
+            	for (int j = 0; j < 4; j++) {
+            		String[] num = inputlist.get(index++).split(" ");
+            		for (int k = 0; k < columns; k++) {
+            			boardValues[k][j] = Math.abs((Integer.parseInt(num[k])));
+            		}
+            	}
+                MaxPebbleFinder finder = new MaxPebbleFinder(columns, boardValues);
+                builder.append(finder.getMaxPlacementSum());
+                builder.append(System.getProperty("line.separator"));
+            }
+            String output = builder
+                    .toString()
+                    .trim();
+
+            bw.write(output);
+            bw.flush();
+            bw.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
